@@ -3,8 +3,8 @@
   
 ![Cookie Importer UI](assets/ui.jpg)
 
-  
-Download extension from official Firefox Addons: [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/neeno-cookie-importer/)
+
+Add extension from official Firefox Addons: [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/neeno-cookie-importer/)
  
 
 **The definitive session management suite for developers to master browser cookies with precision, speed, and unlimited scale.**
