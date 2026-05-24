@@ -1,5 +1,7 @@
 # Neeno's Cookie Importer
 
+![Cookie Importer UI](assets/hero-ui.png)
+
 **The definitive session management suite for developers to master browser cookies with precision, speed, and unlimited scale.**
 
 **Neeno's Cookie Importer** transforms the complex workflow of managing session data into a seamless experience. Powered by a brand new IndexedDB architecture, v2.4.9 evolves into a heavyweight toolkit: allowing you to **Snapshot** unlimited sessions for later use, **Lock** critical cookies against accidental deletion, and **Edit** advanced attributes directly from a non-blocking UI.
