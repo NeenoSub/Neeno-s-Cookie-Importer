@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neeno's Cookie Importer</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <img src="icons/icon48.png" alt="Logo" class="logo">
+      <div class="title-group">
+        <h1>Cookie Importer <span style="color:var(--primary-color); font-size:10px;">PRO</span></h1>
+        <div class="meta-line">
+          <span class="author">by Neeno</span>
+          <span id="versionBadge" class="version-badge"></span>
+        </div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="openUtilitiesBtn" class="icon-button has-tooltip-left" data-tooltip="Cookie Utilities">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path
+            d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+        </svg>
+      </button>
+      <button id="openAdvancedBtn" class="icon-button has-tooltip-left" data-tooltip="Advanced Options">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="1" />
+          <circle cx="19" cy="12" r="1" />
+          <circle cx="5" cy="12" r="1" />
+        </svg>
+      </button>
+      <div class="header-toggle-wrapper has-tooltip-left" data-tooltip="Auto-reload after changes">
+        <label class="switch small-switch">
+          <input type="checkbox" id="autoReload" checked>
+          <span class="slider"></span>
+        </label>
+        <span class="header-toggle-icon">🔄</span>
+      </div>
+
+      <button id="themeToggle" class="icon-button" aria-label="Toggle Dark Mode">
+        <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5" />
+          <path d="M12 1v2" />
+          <path d="M12 21v2" />
+          <path d="M4.22 4.22l1.42 1.42" />
+          <path d="M18.36 18.36l1.42 1.42" />
+          <path d="M1 12h2" />
+          <path d="M21 12h2" />
+          <path d="M4.22 19.78l1.42-1.42" />
+          <path d="M18.36 5.64l1.42-1.42" />
+        </svg>
+        <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="content-area">
+
+    <div class="card storage-card">
+      <div class="storage-info">
+        <span class="storage-label">Browser Storage</span>
+        <strong class="storage-count"><span id="totalCookiesCount">0</span> cookies</strong>
+      </div>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button id="btnOpenSnapshots" class="icon-btn-large has-tooltip-top" data-tooltip="Snapshots">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+            <circle cx="12" cy="13" r="4" />
+          </svg>
+        </button>
+        <button id="stat-btn-cookies" class="btn outline-btn small-btn">Manage Cookies</button>
+      </div>
+    </div>
+
+    <!-- Import Section -->
+    <div class="card input-card">
+      <div class="website-label">
+        <div class="site-identity">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+          </svg>
+          <span id="websiteName">Detecting...</span>
+        </div>
+
+        <div class="modern-toggle-wrapper">
+          <span class="toggle-text">All Domains</span>
+          <label class="switch">
+            <input type="checkbox" id="allDomainsCheckbox">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="cookie-input-wrapper">
+        <textarea id="cookiesInput" placeholder="Paste cookies here to import..." spellcheck="false"
+          style="white-space:pre; overflow-x:auto;"></textarea>
+      </div>
+
+      <div class="note" style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; align-items:center; gap:4px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M12 16v-4M12 8h.01"></path>
+          </svg>
+          <span>Supports: JSON, Netscape, Header, Puppeteer, Python</span>
+        </div>
+        <button id="wordWrapToggle" class="word-wrap-btn" title="Toggle word wrap">↩ Wrap</button>
+      </div>
+    </div>
+
+    <div class="card preview-card" id="previewSection" style="display: none;">
+      <div class="preview-header">
+        <div class="preview-line">
+          🕵️ Detected Format: <strong id="detectedFormat">Unknown</strong>
+        </div>
+        <div class="preview-line stats-line">
+          <span>🍪 Cookies: <strong id="cookieCount">0</strong></span>
+          <span class="divider">|</span>
+          <span>🔁 Duplicates: <strong id="duplicateCount">0</strong></span>
+          <span class="divider" id="expiredDivider">|</span>
+          <span id="expiredSection">⌛ Expired: <strong id="expiredCount">0</strong></span>
+        </div>
+      </div>
+
+      <div class="conflict-resolution" id="conflictOptions">
+        <label style="font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:2px;">Conflict
+          Resolution:</label>
+        <div class="radios">
+          <label><input type="radio" name="conflict" value="overwrite" checked> Overwrite</label>
+          <label><input type="radio" name="conflict" value="skip"> Skip</label>
+          <label><input type="radio" name="conflict" value="rename"> Rename</label>
+        </div>
+        <button id="renewExpiredOption" class="btn primary-btn tiny-btn" style="display: none;">Renew expires</button>
+      </div>
+    </div>
+
+    <div class="actions-grid">
+      <div class="action-group-left" style="display:flex; gap:4px;">
+        <button id="clearCookies" class="btn danger-btn icon-only-btn has-tooltip-bottom-left"
+          aria-label="Clear Cookies">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M3 6h18" />
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+          </svg>
+        </button>
+        <button id="openAutoDeleteBtn" class="btn outline-btn icon-only-btn ad-tooltip-btn"
+          aria-label="Auto-Delete Rules" data-tooltip="Auto-Delete Rules">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+        </button>
+      </div>
+      <div class="export-group-wrapper">
+        <button id="exportMenuBtn" class="btn export-trigger-btn">
+          <span>Export Cookies</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </button>
+      </div>
+      <div class="action-group-right">
+        <button id="importCookies" class="btn primary-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Import
+        </button>
+      </div>
+    </div>
+
+    <div class="card log-card">
+      <div class="log-header" id="logToggle">
+        <span class="log-title">Debug & Activity Log</span>
+        <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </div>
+      <div class="log-container" id="activityLogContainer" style="display: none;">
+        <div id="activityLogContent" class="log-content"></div>
+        <div class="log-actions">
+          <button id="copyLogBtn" class="link-btn">Copy Log</button>
+          <button id="clearLogBtn" class="link-btn">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-settings">
+      <div class="shortcut-help-row">
+        <div id="shortcutHelpText" class="shortcut-help"></div>
+        <button id="openShortcutsBtn" class="footer-icon-btn has-tooltip-top" data-tooltip="View All Shortcuts">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
+          </svg>
+        </button>
+      </div>
+      <div class="footer-links-row">
+        <a href="https://addons.mozilla.org/en-US/firefox/addon/neeno-cookie-importer/reviews" target="_blank"
+          rel="noopener noreferrer" class="footer-link">Report Bug / Suggestion</a>
+        <span class="footer-sep">|</span>
+        <a href="https://addons.mozilla.org/en-US/android/addon/android-cookie-importer-neeno/" target="_blank"
+          rel="noopener noreferrer" class="footer-link android-link" style="color: #3DDC84;">
+          Android version
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <div id="resultMessage" class="message-box-fixed"></div>
+
+  <!-- EXPORT OPTIONS MODAL -->
+  <div id="exportModal" class="modal-overlay" style="z-index: 250;">
+    <div class="modal-content modal-sm">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2>Export Format</h2>
+          <button id="closeExportModalBtn" class="icon-button close-btn">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 12px;">
+        <p class="modal-subtitle">Select a format to copy to clipboard.</p>
+        <div class="export-grid">
+          <button class="export-option-card" data-format="json">
+            <span class="fmt-icon">{}</span>
+            <div class="fmt-info"><span class="fmt-title">JSON</span><span class="fmt-detail">Standard</span></div>
+          </button>
+          <button class="export-option-card" data-format="netscape">
+            <span class="fmt-icon">📄</span>
+            <div class="fmt-info"><span class="fmt-title">Netscape</span><span class="fmt-detail">Wget / Curl</span>
+            </div>
+          </button>
+          <button class="export-option-card" data-format="header">
+            <span class="fmt-icon">H</span>
+            <div class="fmt-info"><span class="fmt-title">Header String</span><span
+                class="fmt-detail">name=value;</span></div>
+          </button>
+          <button class="export-option-card" data-format="puppeteer">
+            <span class="fmt-icon">🤖</span>
+            <div class="fmt-info"><span class="fmt-title">Puppeteer</span><span class="fmt-detail">Node.js</span></div>
+          </button>
+          <button class="export-option-card" data-format="python">
+            <span class="fmt-icon">🐍</span>
+            <div class="fmt-info"><span class="fmt-title">Python Dict</span><span class="fmt-detail">Requests</span>
+            </div>
+          </button>
+          <button class="export-option-card" data-format="csv">
+            <span class="fmt-icon">📊</span>
+            <div class="fmt-info"><span class="fmt-title">CSV</span><span class="fmt-detail">Excel / Audit</span></div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manage Modal -->
+  <div id="manageModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2 id="manageModalTitle">Manage Cookies</h2>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button id="manageViewDomainsBtn" class="icon-button has-tooltip-bottom" title="View Domains"
+              data-tooltip="View Domains">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+            <div class="modern-toggle-wrapper" style="margin-right: 4px;">
+              <span class="toggle-text" style="font-size:11px;">Advanced</span>
+              <label class="switch small-switch">
+                <input type="checkbox" id="showAdvancedToggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <button id="closeModalBtn" class="icon-button close-btn">&times;</button>
+          </div>
+        </div>
+        <div class="search-bar-container" style="flex-direction: column; align-items: stretch;">
+          <div style="position: relative; width: 100%;">
+            <svg class="search-icon" style="top:50%; transform:translateY(-50%);" xmlns="http://www.w3.org/2000/svg"
+              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input type="text" id="editorSearch" placeholder="Search cookies..." autocomplete="off">
+          </div>
+          <!-- Search scope filter pills -->
+          <div class="search-scope-pills" id="manageSearchScope">
+            <div class="search-scope-pill active" data-scope="all">All</div>
+            <div class="search-scope-pill" data-scope="domain">Domain</div>
+            <div class="search-scope-pill" data-scope="name">Name</div>
+            <div class="search-scope-pill" data-scope="value">Value</div>
+          </div>
+          <!-- FIX: Advanced Filters (Hidden by default) -->
+          <div id="manageAdvancedFilters" class="advanced-filters" style="display: none;">
+            <div class="filter-pill" id="filter-manage-secure" title="Require Secure Cookie">Secure Only</div>
+            <div class="filter-pill" id="filter-manage-httponly" title="Require HttpOnly Cookie">HttpOnly Only</div>
+            <select id="filter-manage-samesite" class="filter-pill" style="padding-right: 4px; outline: none;">
+              <option value="">SameSite: Any</option>
+              <option value="no_restriction">None</option>
+              <option value="lax">Lax</option>
+              <option value="strict">Strict</option>
+              <option value="unspecified">Unspec</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="cookie-list-header manage-layout">
+        <input type="checkbox" id="selectAllManage" title="Toggle Visible">
+        <span class="col-domain">Domain</span>
+        <button id="globalLockToggle" class="col-lock-btn has-tooltip-top" data-tooltip="Toggle Lock"
+          style="text-align:center;">🔒</button>
+        <span class="col-name">Name</span>
+        <span class="col-value" style="display:flex; align-items:center;">Value</span>
+        <button id="deleteSelectedManageBtn" class="delete-row-btn delete-header-btn" title="Delete selected" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          </svg>
+        </button>
+      </div>
+      <div id="modalBody" class="modal-body">
+        <div id="cookieListContainer" class="cookie-list-container"></div>
+        <div id="loadMoreContainer" class="load-more-container"
+          style="display:none; padding: 12px; text-align: center;">
+          <button id="loadMoreBtn" class="btn outline-btn small-btn" style="margin: 0 auto;">Load More</button>
+        </div>
+      </div>
+      <div class="modal-footer-dynamic">
+        <span class="modal-hint">Unsaved changes</span>
+        <button id="applyChangesBtn" class="btn primary-btn small-btn" style="display: none;">Apply Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Snapshots Modal -->
+  <div id="snapshotsModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2>Session Snapshots</h2>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button id="openSnapshotOptionsBtn" class="icon-button" title="Snapshot Options"
+              style="color:var(--text-secondary);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z">
+                </path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+            <button id="closeSnapshotsModalBtn" class="icon-button close-btn">&times;</button>
+          </div>
+        </div>
+        <p class="modal-subtitle">Save your current browser cookies as a profile to restore later. Useful for switching
+          accounts.</p>
+        <button id="createSnapshotBtn" class="btn primary-btn small-btn"
+          style="width:100%; justify-content:center; margin-top:8px;">
+          + Create Snapshot
+        </button>
+      </div>
+      <div id="snapshotsListBody" class="modal-body" style="padding:12px;">
+        <div id="snapshotsContainer" class="snapshots-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="snapshotOptionsModal" class="modal-overlay" style="z-index: 210;">
+    <div class="modal-content modal-sm">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2 id="snapshotOptionsTitle">Snapshot Tools</h2>
+          <button id="closeSnapshotOptionsBtn" class="icon-button close-btn">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 16px; display:flex; flex-direction:column; gap:12px;">
+        <p class="modal-subtitle">Backup your snapshots to clipboard or restore from text.</p>
+        <div style="display:flex; gap:8px;">
+          <button id="exportSnapshotsBtn" class="btn outline-btn small-btn" style="flex:1" title="Save to File">Export
+            All</button>
+          <button id="importSnapshotsBtn" class="btn outline-btn small-btn" style="flex:1"
+            title="Paste from clipboard">Import</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="snapshotHostsModal" class="modal-overlay" style="z-index: 220;">
+    <div class="modal-content modal-sm">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2 id="snapshotHostsTitle">Available Domains</h2>
+          <button id="closeSnapshotHostsBtn" class="icon-button close-btn">&times;</button>
+        </div>
+        <div class="search-bar-container" style="margin-top:8px;">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input type="text" id="snapshotHostsSearch" placeholder="Search domains..." autocomplete="off">
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <div id="snapshotHostsList" class="domain-list-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="shortcutsModal" class="modal-overlay" style="z-index: 240;">
+    <div class="modal-content modal-sm">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2>Shortcuts</h2>
+          <button id="closeShortcutsBtn" class="icon-button close-btn">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <div id="shortcutsList" class="shortcuts-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced Modal -->
+  <div id="advancedModal" class="modal-overlay" style="z-index: 245;">
+    <div class="modal-content modal-sm">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2>Advanced Options</h2>
+          <button id="closeAdvancedBtn" class="icon-button close-btn">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 12px 0;">
+
+        <div class="settings-group">
+          <div class="setting-row">
+            <label for="showBadgeToggle" style="font-size: 13px; color: var(--text-primary);">Show Badge Counter</label>
+            <label class="switch small-switch"><input type="checkbox" id="showBadgeToggle" checked><span
+                class="slider"></span></label>
+          </div>
+        </div>
+
+        <!-- FIX: Log Limits Setting -->
+        <div class="settings-group">
+          <div class="setting-row">
+            <label for="maxLogEntriesInput">Max Log Entries</label>
+            <input type="number" id="maxLogEntriesInput" class="cookie-input" style="width: 80px;" min="10" max="5000"
+              value="100">
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="setting-row">
+            <label for="renewDurationSelect">Renew Period</label>
+            <select id="renewDurationSelect" class="adv-select-large">
+              <option value="86400">1 Day</option>
+              <option value="604800">1 Week</option>
+              <option value="2592000" selected>1 Month</option>
+              <option value="31536000">1 Year</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div id="customRenewContainer" class="setting-row-sub" style="display:none;">
+            <input type="number" id="customRenewDays" class="cookie-input" placeholder="Days" min="1" value="365">
+            <span class="setting-unit">days</span>
+          </div>
+        </div>
+
+        <!-- Danger Zone with Granular Checkboxes -->
+        <div class="settings-group"
+          style="border-top: 1px solid var(--border-color); margin-top: 4px; padding-top: 12px;">
+          <div style="padding: 0 0 12px 0;">
+            <div class="modal-subtitle danger-zone-box"
+              style="display:flex; flex-direction:column; gap:4px; margin-top:0;">
+              <div class="danger-zone-header" style="line-height: 1.3;">
+                <strong style="margin-right:4px;">Deep Clean</strong>
+              </div>
+              <!-- Compact Checkboxes -->
+              <div class="dc-grid">
+                <label class="dc-item has-tooltip-right"
+                  data-tooltip="Clears both LocalStorage and SessionStorage. Websites typically use these to save local data like user preferences, theme settings, shopping carts, and active session details."><input
+                    type="checkbox" id="dc-localstorage" checked> Local/Session
+                  Storage</label>
+                <label class="dc-item has-tooltip-left"
+                  data-tooltip="Removes structured databases used by apps to store large amounts of data offline (e.g. cached files, app data)"><input
+                    type="checkbox" id="dc-indexeddb" checked> IndexedDB</label>
+                <label class="dc-item has-tooltip-left"
+                  data-tooltip="Clears cached resources like images, scripts, and API responses stored by the browser"><input
+                    type="checkbox" id="dc-cache" checked> Cache</label>
+                <label class="dc-item has-tooltip-right"
+                  data-tooltip="Unregisters background scripts that run even when the website is closed (push notifications, offline sync)"><input
+                    type="checkbox" id="dc-sw" checked> Service Workers</label>
+                <label class="dc-item has-tooltip-left"
+                  data-tooltip="Clears saved form data like auto-filled names, emails, addresses"><input type="checkbox"
+                    id="dc-formdata"> Form Data</label>
+                <label class="dc-item has-tooltip-left"
+                  data-tooltip="Deletes all cookies for the selected scope (current site or all sites)"><input
+                    type="checkbox" id="dc-cookies" checked> Cookies</label>
+              </div>
+              <div
+                style="color: #ea580c; font-weight:600; font-size:10px; display:flex; align-items:center; gap:4px; margin-top:4px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                Locked cookies are ALWAYS preserved.
+              </div>
+              <div class="dc-target-container">
+                <strong>Target:</strong> <span id="dc-target-display">Unknown</span>
+              </div>
+            </div>
+            <button id="advancedClearBtn" class="btn danger-btn"
+              style="width: 100%; justify-content: center; margin-top: 8px;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6h18" />
+                <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+                <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+                <line x1="10" y1="11" x2="10" y2="17" />
+                <line x1="14" y1="11" x2="14" y2="17" />
+              </svg>
+              Execute Deep Clean
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Import Modal -->
+  <div id="importReviewModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2>Review Import</h2>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button id="importViewDomainsBtn" class="icon-button has-tooltip-bottom" title="View Domains"
+              data-tooltip="View Domains">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+            <div class="modern-toggle-wrapper" style="margin-right: 4px;">
+              <span class="toggle-text" style="font-size:11px;">Advanced</span>
+              <label class="switch small-switch">
+                <input type="checkbox" id="importAdvancedToggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <button id="closeImportModalBtn" class="icon-button close-btn">&times;</button>
+          </div>
+        </div>
+        <div class="search-bar-container" style="flex-direction: column; align-items: stretch;">
+          <div style="position: relative; width: 100%;">
+            <svg class="search-icon" style="top:50%; transform:translateY(-50%);" xmlns="http://www.w3.org/2000/svg"
+              width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input type="text" id="importSearch" placeholder="Search import data..." autocomplete="off">
+          </div>
+          <!-- Search scope filter pills -->
+          <div class="search-scope-pills" id="importSearchScope">
+            <div class="search-scope-pill active" data-scope="all">All</div>
+            <div class="search-scope-pill" data-scope="domain">Domain</div>
+            <div class="search-scope-pill" data-scope="name">Name</div>
+            <div class="search-scope-pill" data-scope="value">Value</div>
+          </div>
+          <!-- FIX: Advanced Filters (Hidden by default) -->
+          <div id="importAdvancedFilters" class="advanced-filters" style="display: none;">
+            <div class="filter-pill" id="filter-import-secure">Secure Only</div>
+            <div class="filter-pill" id="filter-import-httponly">HttpOnly Only</div>
+            <select id="filter-import-samesite" class="filter-pill" style="padding-right: 4px; outline: none;">
+              <option value="">SameSite: Any</option>
+              <option value="no_restriction">None</option>
+              <option value="lax">Lax</option>
+              <option value="strict">Strict</option>
+              <option value="unspecified">Unspec</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="cookie-list-header import-layout">
+        <input type="checkbox" id="selectAllImport" checked title="Toggle Visible">
+        <span class="col-domain">Domain</span>
+        <span class="col-name">Name</span>
+        <span class="col-value" style="display:flex; align-items:center;">Value</span>
+        <button id="deleteSelectedImportBtn" class="delete-row-btn delete-header-btn" title="Delete selected" disabled>
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          </svg>
+        </button>
+      </div>
+      <div id="importModalBody" class="modal-body">
+        <div id="importListContainer" class="cookie-list-container"></div>
+        <div id="loadMoreImportContainer" class="load-more-container"
+          style="display:none; padding-bottom: 12px; text-align: center;">
+          <button id="loadMoreImportBtn" class="btn outline-btn small-btn" style="margin: 0 auto;">Load More</button>
+        </div>
+      </div>
+      <div class="modal-footer-static">
+        <button id="cancelImportBtn" class="btn outline-btn">Cancel</button>
+        <button id="confirmImportBtn" class="btn primary-btn">Confirm Import</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto-Delete Modal -->
+  <div id="autoDeleteModal" class="modal-overlay" style="z-index: 205;">
+    <div class="modal-content modal-ad">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2>🛡️ Auto-Delete Rules</h2>
+          <button id="closeAutoDeleteBtn" class="icon-button close-btn">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body"
+        style="padding: 12px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; overflow-x:visible;">
+
+        <!-- Global Toggle (TOP priority) -->
+        <div class="ad-global-toggle-row">
+          <div class="ad-global-toggle-info">
+            <label for="autoDeleteGlobalToggle" class="ad-global-label">Enable Auto-Delete</label>
+            <span class="ad-global-sublabel">Master switch for automatic cookie cleanup</span>
+          </div>
+          <label class="switch small-switch"><input type="checkbox" id="autoDeleteGlobalToggle"><span
+              class="slider"></span></label>
+        </div>
+
+        <!-- Domain Display -->
+        <div class="ad-domain-display-row">
+          <span class="ad-domain-display-label">Target Domain:</span>
+          <strong id="autoDeleteDomainDisplay" class="ad-domain-display-value">—</strong>
+        </div>
+
+        <div id="autoDeleteRuleEditor">
+          <!-- Cleanup Mode -->
+          <div class="ad-section">
+            <label class="ad-section-title">Cleanup Mode</label>
+            <div class="ad-mode-grid">
+              <label class="ad-level-card has-tooltip-bottom" data-level="normal"
+                data-tooltip="Cookies auto-deleted based on triggers you configure (tab close, navigation, etc.)">
+                <input type="radio" name="adLevel" value="normal" checked>
+                <span class="ad-level-icon">🧹</span>
+                <span class="ad-level-name">Auto-Delete</span>
+                <span class="ad-level-desc">Delete on triggers below</span>
+              </label>
+              <label class="ad-level-card has-tooltip-bottom" data-level="greylist"
+                data-tooltip="Cookies kept during session but deleted on browser restart — good for temp browsing">
+                <input type="radio" name="adLevel" value="greylist">
+                <span class="ad-level-icon">⏸️</span>
+                <span class="ad-level-name">Session-Only</span>
+                <span class="ad-level-desc">Delete on browser restart</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Triggers & Site Data side by side -->
+          <div class="ad-two-col">
+            <div id="adTriggersSection" class="ad-section">
+              <label class="ad-section-title">Cleanup Triggers</label>
+              <div class="ad-trigger-list">
+                <label class="ad-trigger-item has-tooltip-right"
+                  data-tooltip="Delete cookies when any tab of this domain is closed">
+                  <input type="checkbox" id="adTriggerTabClose" checked>
+                  <span>On Tab Close</span>
+                </label>
+                <label class="ad-trigger-item has-tooltip-right"
+                  data-tooltip="Delete cookies when you switch to a different tab (lose focus on this domain’s tab)">
+                  <input type="checkbox" id="adTriggerLoseFocus">
+                  <span>On Tab Switch</span>
+                </label>
+                <label class="ad-trigger-item has-tooltip-right"
+                  data-tooltip="Delete cookies when the browser is started — ensures a clean state each session">
+                  <input type="checkbox" id="adTriggerRestart">
+                  <span>On Browser Start</span>
+                </label>
+                <label class="ad-trigger-item has-tooltip-right"
+                  data-tooltip="Delete cookies when you navigate from this domain to a different website in the same tab">
+                  <input type="checkbox" id="adTriggerDomainChange">
+                  <span>On Domain Navigation</span>
+                </label>
+              </div>
+            </div>
+
+            <div id="adSiteDataSection" class="ad-section">
+              <label class="ad-section-title">Also Clean Site Data</label>
+              <div class="ad-trigger-list">
+                <label class="ad-trigger-item has-tooltip-right"
+                  data-tooltip="Clears both LocalStorage and SessionStorage. Websites typically use these to save local data like user preferences, theme settings, shopping carts, and active session details.">
+                  <input type="checkbox" id="adSiteWebStorage">
+                  <span>Local/Session Storage</span></label>
+                <label class="ad-trigger-item has-tooltip-right"
+                  data-tooltip="Removes structured databases used by apps to store large amounts of data offline (e.g. cached files, app data)">
+                  <input type="checkbox" id="adSiteIndexedDB">
+                  <span>IndexedDB</span></label>
+                <label class="ad-trigger-item has-tooltip-right"
+                  data-tooltip="Clears cached resources like images, scripts, and API responses stored by the browser">
+                  <input type="checkbox" id="adSiteCache"> <span>Cache</span></label>
+                <label class="ad-trigger-item has-tooltip-right"
+                  data-tooltip="Unregisters background scripts that run even when the website is closed (push notifications, offline sync)">
+                  <input type="checkbox" id="adSiteSW"> <span>Service Workers</span></label>
+                <label class="ad-trigger-item has-tooltip-right"
+                  data-tooltip="Clears saved form data like auto-filled names, emails, addresses">
+                  <input type="checkbox" id="adSiteFormData">
+                  <span>Form Data</span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cookie Scope -->
+          <div id="adCookieScopeSection" class="ad-section ad-cookie-scope">
+            <label class="ad-section-title">Cookie Scope</label>
+            <div class="ad-scope-radios">
+              <label class="ad-scope-option">
+                <input type="radio" name="adCookieScope" value="all" checked>
+                <span class="ad-scope-label">🍪 All Cookies</span>
+                <span class="ad-scope-desc">Delete all cookies for this domain</span>
+              </label>
+              <label class="ad-scope-option">
+                <input type="radio" name="adCookieScope" value="expired">
+                <span class="ad-scope-label">⏳ Expired Only</span>
+                <span class="ad-scope-desc">Only remove cookies that have already expired</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Delay -->
+          <div class="ad-delay-row">
+            <div>
+              <label for="adDelayInput" class="ad-delay-label">Cleanup Delay</label>
+              <span class="ad-delay-sublabel">0 = instant cleanup</span>
+            </div>
+            <div style="display:flex; align-items:center; gap:4px;">
+              <input type="number" id="adDelayInput" class="cookie-input" style="width:60px;" min="0" max="300"
+                value="0">
+              <span class="setting-unit">sec</span>
+            </div>
+          </div>
+
+          <div class="ad-safe-notice"
+            style="color:#ea580c; background:rgba(234,88,12,0.06); border-color:rgba(234,88,12,0.15);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            Locked cookies are ALWAYS preserved.
+          </div>
+        </div>
+
+        <div id="adEditIndicator" class="ad-edit-indicator" style="display:none;">
+          <span>✏️ Editing rule for: <strong id="adEditDomain"></strong></span>
+          <button id="adCancelEdit" class="link-btn" style="font-size:10px;">Cancel</button>
+        </div>
+        <div class="ad-save-row">
+          <button id="adSaveRuleBtn" class="btn primary-btn small-btn" style="flex:1; justify-content:center;">Add
+            Rule</button>
+        </div>
+
+        <!-- Notification toggle -->
+        <div class="ad-notify-row">
+          <label class="ad-trigger-item" style="flex:1; justify-content:space-between;">
+            <span>🔔 Show confirmation when triggered</span>
+            <input type="checkbox" id="adNotifyToggle" checked>
+          </label>
+        </div>
+
+        <!-- Managed Domains List -->
+        <div class="ad-managed-section">
+          <label class="ad-section-title">Managed Domains</label>
+          <div id="adManagedDomainsList" class="ad-managed-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Modals -->
+  <div id="customInputModal" class="modal-overlay" style="z-index: 200;">
+    <div class="modal-content modal-sm">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2 id="customInputTitle">New Snapshot</h2>
+          <button id="closeInputModalBtn" class="icon-button close-btn">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 16px; display:flex; flex-direction:column; gap:8px;">
+        <p id="customInputMessage" style="font-size:12px; color:var(--text-secondary); margin:0;">Enter a name for this
+          snapshot:</p>
+        <input type="text" id="customInputValue" class="cookie-input" style="padding:8px; font-size:13px;"
+          placeholder="e.g. Admin Login">
+      </div>
+      <div class="modal-footer-static" style="justify-content: flex-end;">
+        <button id="customInputCancelBtn" class="btn outline-btn small-btn">Cancel</button>
+        <button id="customInputConfirmBtn" class="btn primary-btn small-btn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="customConfirmModal" class="modal-overlay" style="z-index: 300;">
+    <div class="modal-content modal-sm">
+      <div class="modal-header">
+        <div class="header-top">
+          <h2 id="customConfirmTitle">Confirm Action</h2>
+          <button id="closeConfirmModalBtn" class="icon-button close-btn">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 16px;">
+        <p id="customConfirmMessage" style="font-size:13px; color:var(--text-primary); margin:0;">Are you sure?</p>
+      </div>
+      <div class="modal-footer-static" style="justify-content: flex-end;">
+        <button id="customConfirmCancelBtn" class="btn outline-btn small-btn">Cancel</button>
+        <button id="customConfirmOkBtn" class="btn danger-btn small-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="utils.js"></script>
+  <script src="dbHandler.js"></script>
+  <script src="netscapeFormat.js"></script>
+  <script src="genericCookieHandler.js"></script>
+  <script src="cookieFormats.js"></script>
+  <script src="cookieHandlerPopup.js"></script>
+  <script src="popup.js"></script>
+</body>
+
+</html>
