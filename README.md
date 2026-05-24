@@ -1,6 +1,6 @@
 # Neeno's Cookie Importer
 
-![Cookie Importer UI](assets/hero-ui.png)
+![Cookie Importer UI](assets/ui.jpg)
 
 **The definitive session management suite for developers to master browser cookies with precision, speed, and unlimited scale.**
 
