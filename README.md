@@ -1,7 +1,9 @@
 # Neeno's Cookie Importer
 
-  
-![Cookie Importer UI](assets/ui.jpg)![Cookie Importer UI](assets/ui2.jpg)
+
+<div align="center">
+  <img src="assets/ui.jpg" alt="Cookie Importer UI">
+</div>
 
 
 Add extension from official Firefox Addons: [Firefox Add-ons](https://addons.mozilla.org/en-US/firefox/addon/neeno-cookie-importer/)
