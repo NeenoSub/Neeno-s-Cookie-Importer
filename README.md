@@ -4,7 +4,7 @@
 
 
 
--
+
 
 <div align="center">
   <img src="assets/ui.jpg" alt="Cookie Importer UI">
